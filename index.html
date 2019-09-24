@@ -29,8 +29,8 @@
 <body>
   <br><br><br><br><br><br><br><br><br><br>
   <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
       <div class="form createForm">
         <div class="card container">
           <br>
@@ -61,7 +61,7 @@
       <br>
     </div>
   </div>
-  <div class="col-md-4"></div>
+  <div class="col-md-3"></div>
   </div>
   
  
@@ -76,10 +76,12 @@
         return false;
       });
       socket.on('chat message', function (msg) {
+      
         $('#messages').append($('<li>').html(msg));
          window.scrollTo(0, document.body.scrollHeight);
       });
       socket.on('is_online', function (username) {
+
       $('#messages').append($('<li>').html(username));
     });
     socket.on('connect', function(){

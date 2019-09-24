@@ -1,28 +1,51 @@
 var app = require('express')();
+var express = require('express');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8000;
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-io.sockets.on('connection', function(socket){
-  socket.on('username', function(username) {
-    socket.username = username;
-    io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>');
-});
-socket.on('disconnect', function(username) {
-  io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
+app.use(express.static('public'));
+
+io.on('connection', function(socket) {
+	socket.on('username', function(client) {
+		console.log('new user connected');
+    	socket.broadcast.emit('username', client);
+  })
+  
+
+
+  	socket.on('chat message', function(msg){
+    	socket.broadcast.emit('chat message', msg);
+    });
+    
+
+
+	socket.on('inactive', function(msg) {
+		console.log('user disconnected');
+    	socket.broadcast.emit('inactive', msg);
+    })
+
+
+
+    socket.on('typing', function(msg) {
+    	socket.broadcast.emit('typing', msg);
+    })
+
+
+
+    
+    socket.on('connected', function(msg) {
+    	console.log(msg);
+    	socket.broadcast.emit('connected', msg);
+    })
 })
 
-  socket.on('chat message', function(msg){
-    io.emit('chat message','<strong>' + socket.username + '<strong>:' +  msg);
-  });
-
-});
 
 
-var sever = http.listen(port, function(){
+http.listen(port, function(){
   console.log('listening on *:' + port);
 });
